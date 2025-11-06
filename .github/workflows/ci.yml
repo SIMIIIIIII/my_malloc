@@ -17,13 +17,13 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libcunit1 libcunit1-dev clang lcov
+        sudo apt-get install -y libcunit1 libcunit1-dev gcc lcov
 
     - name: Build project with coverage
       run: |
-        clang -Wall -Werror --coverage -o malloc.o -c malloc.c
-        clang -Wall -Werror --coverage -o test test.c malloc.o -lcunit -lm
-        clang -Wall -Werror --coverage -o resume test_resume.c malloc.o -lcunit -lm
+        gcc -Wall -Werror --coverage -o malloc.o -c malloc.c
+        gcc -Wall -Werror --coverage -o test test.c malloc.o -lcunit -lm
+        gcc -Wall -Werror --coverage -o resume test_resume.c malloc.o -lcunit -lm
 
     - name: Run tests
       run: ./test
