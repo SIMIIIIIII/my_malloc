@@ -17,3 +17,5 @@ resume: test_resume.c malloc.o
 
 clean:
 	rm -f test malloc malloc.o resume
+	rm -f *.gcda *.gcno *.gcov
+	rm -f coverage.info
