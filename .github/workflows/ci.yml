@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libcunit1 libcunit1-dev gcc lcov
+
+    - name: Build project with coverage
+      run: |
+        gcc -Wall -Werror --coverage -o malloc.o -c malloc.c
+        gcc -Wall -Werror --coverage -o test test.c malloc.o -lcunit -lm
+        gcc -Wall -Werror --coverage -o resume test_resume.c malloc.o -lcunit -lm
+
+    - name: Run tests
+      run: ./test
+
+    - name: Run resume tests
+      run: ./resume
+
+    - name: Generate coverage report
+      run: |
+        lcov --capture --directory . --output-file coverage.info
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info --ignore-errors unused
+        lcov --list coverage.info
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: ./coverage.info
+        fail_ci_if_error: false
