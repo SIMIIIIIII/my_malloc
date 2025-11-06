@@ -17,13 +17,28 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libcunit1 libcunit1-dev clang
+        sudo apt-get install -y libcunit1 libcunit1-dev clang lcov
 
-    - name: Build project
-      run: make matrix.o
+    - name: Build project with coverage
+      run: |
+        clang -Wall -Werror --coverage -o malloc.o -c malloc.c
+        clang -Wall -Werror --coverage -o test test.c malloc.o -lcunit -lm
+        clang -Wall -Werror --coverage -o resume test_resume.c malloc.o -lcunit -lm
 
     - name: Run tests
-      run: make test
+      run: ./test
 
     - name: Run resume tests
-      run: make resume
+      run: ./resume
+
+    - name: Generate coverage report
+      run: |
+        lcov --capture --directory . --output-file coverage.info
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info
+        lcov --list coverage.info
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: ./coverage.info
+        fail_ci_if_error: false
