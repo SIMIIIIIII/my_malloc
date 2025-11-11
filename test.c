@@ -9,12 +9,12 @@
 uint8_t MY_HEAP[SIZE_HEAP];
 
 void test_simple(void){
-    // Je test la fonction init
+    // I test the init function
     init();
     uint16_t index = read_2bytes(0);
     CU_ASSERT_EQUAL(index, 2);
 
-    // Je test la fonction get_first_free et si la heap a été bien préparer
+    // I test the get_first_free function and if the heap was properly prepared
     BeginBlock* bloc = get_first_free();
     CU_ASSERT_EQUAL(bloc->size, 63992)
 
