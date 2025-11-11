@@ -32,37 +32,37 @@ void etat_memoire(){
         block = get_next_block(block);
     }
 
-    printf("Etat de la mémoire àpres les tests : \n");
-    printf("Nombre de blocs alloués : %d\n", mallocs);
-    printf("Taille totale de blocs alloués : %d\n", total_malloc_size);
-    printf("Le plus gros bloc alloué : %d\n", bigest_malloc_size);
-    printf("Nombre de blocs libres : %d\n", frees);
-    printf("Taille totale de blocs libres : %d\n", total_free_size);
-    printf("Le plus gros bloc libre : %d\n", bigest_free_size);
+    printf("Memory state after tests: \n");
+    printf("Number of allocated blocks: %d\n", mallocs);
+    printf("Total size of allocated blocks: %d\n", total_malloc_size);
+    printf("Largest allocated block: %d\n", bigest_malloc_size);
+    printf("Number of free blocks: %d\n", frees);
+    printf("Total size of free blocks: %d\n", total_free_size);
+    printf("Largest free block: %d\n", bigest_free_size);
     
 }
 
 void test_random_steps(){
     init();
 
-    //déterminer un range de taille pour les données à allouer
+    // determine a size range for the data to allocate
     uint16_t sizemax = 1000;
     uint16_t sizemin = 500;
     uint16_t length = SIZE_HEAP/sizemin;
 
-    //compteurs de résultats : 
+    // result counters: 
     int nulls = 0;
     int mallocs = 0;
     int frees = 0;
 
-    // créer un tableau qui contient tous les pointeurs vers les zones allouées
+    // create an array that contains all pointers to allocated zones
     void* tab[length];
     for (uint16_t i=0; i<length; i++){
         tab[i] = NULL;
     }
 
     for (int step=0; step<1000; step++){
-        uint16_t i = rand() % length; // choisir une case aléatoire
+        uint16_t i = rand() % length; // choose a random slot
         if (tab[i]==NULL){
             size_t size = sizemin + rand() % (sizemax - sizemin + 1);
             tab[i] = my_malloc(size);
@@ -81,10 +81,10 @@ void test_random_steps(){
         }
     }
   
-    printf("Résultats du test random_steps : \n");
-    printf("Nombre de mallocs : %d\n", mallocs);
-    printf("Nombre de frees : %d\n", frees);
-    printf("Nombre de nuls : %d\n", nulls);
+    printf("Results of random_steps test: \n");
+    printf("Number of mallocs: %d\n", mallocs);
+    printf("Number of frees: %d\n", frees);
+    printf("Number of nulls: %d\n", nulls);
     printf("\n");
     etat_memoire();
     printf("\n");
@@ -129,11 +129,11 @@ void test_random_time(){
         elapsed = (now.tv_sec - start.tv_sec) + (now.tv_usec - start.tv_usec) / 1e6;
     }
     
-    printf("Résultats du test random_time : \n");
-    printf("Nombre de mallocs : %d\n", mallocs);
-    printf("Nombre de frees : %d\n", frees);
-    printf("Nombre de nuls : %d\n", nulls);
-    printf("Temps écoulé : %.2f secondes\n", elapsed);
+    printf("Results of random_time test: \n");
+    printf("Number of mallocs: %d\n", mallocs);
+    printf("Number of frees: %d\n", frees);
+    printf("Number of nulls: %d\n", nulls);
+    printf("Elapsed time: %.2f seconds\n", elapsed);
     printf("\n");
     etat_memoire();
     printf("\n");
@@ -144,6 +144,6 @@ int main(void) {
     test_random_time();
     
     
-    printf("Tests terminés! 🎉\n");
+    printf("Tests completed! 🎉\n");
     return 0;
 }

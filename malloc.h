@@ -4,14 +4,14 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define SIZE_HEAP 64000 //la taille maximale de la heap
+#define SIZE_HEAP 64000 // maximum heap size
 #define CODE_ERREUR 65535
 extern uint8_t MY_HEAP[SIZE_HEAP];
 
 
 typedef struct BeginBlock{
     uint16_t size;
-    uint16_t next; //si libre, indice du prochain bloc libre ou 65535 si c'est le dernier bloc libre, sinon 0;
+    uint16_t next; // if free, index of the next free block or 65535 if it's the last free block, otherwise 0;
 } BeginBlock;
 
 
@@ -20,134 +20,134 @@ typedef struct{
 } EndBlock;
 
 
-/* return le debut de la heap */
+/* return the start of the heap */
 uint8_t* heap_start();
 
 
-/* return la fin de la heap*/
+/* return the end of the heap */
 uint8_t* heap_end();
 
 
 /**
- * args: BeginBlock*, les métadonnées du début de bloc
+ * args: BeginBlock*, the metadata of the block start
  * 
- * return: la fin d'un bloc (adresse du EndBlock)
+ * return: the end of a block (address of EndBlock)
  * */
 EndBlock* end_of_block(BeginBlock*);
 
 
 /**
- * args: BeginBlock*, les métadonnées du début de bloc
+ * args: BeginBlock*, the metadata of the block start
  * 
- * effet: écrit au bon endroit les méta données de la fin du bloc
+ * effect: writes the metadata of the block end at the correct location
  */
 void set_end_block(BeginBlock*);
 
 
 /** 
- * args: BeginBlock*, les métadonnées du début de bloc
+ * args: BeginBlock*, the metadata of the block start
  * 
  * return:
- *  - 1 regarde si le block se trouve dans le range de la heap
- *  - 0 sinon
+ *  - 1 if the block is within the heap range
+ *  - 0 otherwise
  */
 int in_heap(BeginBlock*);
 
 
 /**
- * args: BeginBlock*, les métadonnées du début de bloc
+ * args: BeginBlock*, the metadata of the block start
  * 
  * return:
- *  - le block précédent, libre ou occupé, s'il existe
- *  - NULL si il n'y a pas des blocs précédent ou si l'adresse passée en argument ne se trouve pas dans la heap.
+ *  - the previous block, free or occupied, if it exists
+ *  - NULL if there is no previous block or if the address passed as argument is not in the heap.
  * */
 BeginBlock* get_prev_block(BeginBlock*);
 
 
 /**
- * args: BeginBlock*, les métadonnées du début de bloc
+ * args: BeginBlock*, the metadata of the block start
  * 
  *  return:
- *  - le block suivant, libre ou occupé, s'il existe
- *  - NULL si dépassement de la heap ou si l'adresse du bloc en argument ne se trouve pas dans la heap
+ *  - the next block, free or occupied, if it exists
+ *  - NULL if heap overflow or if the block address in argument is not in the heap
  * */
 BeginBlock* get_next_block(BeginBlock*);
 
 
 /**
- * args: BeginBlock*, les métadonnées du début de bloc
+ * args: BeginBlock*, the metadata of the block start
  * 
  *  return:
- *  - le block libre précédent, s'il existe
- *  - NULL si dépassement de la heap ou si l'adresse du bloc en argument ne se trouve pas dans la heap
+ *  - the previous free block, if it exists
+ *  - NULL if heap overflow or if the block address in argument is not in the heap
  * */
 BeginBlock* get_prev_free(BeginBlock*);
 
 
 /**
- * args: BeginBlock*, les métadonnées du début de bloc
+ * args: BeginBlock*, the metadata of the block start
  * 
  *  return:
- *  - le block libre suivant, s'il existe
- *  - NULL si dépassement de la heap ou si l'adresse du bloc en argument ne se trouve pas dans la heap
+ *  - the next free block, if it exists
+ *  - NULL if heap overflow or if the block address in argument is not in the heap
  * */
 BeginBlock* get_next_free(BeginBlock*);
 
 
 /**
- * args : BeginBlock* les métadonnées du début du block
+ * args : BeginBlock* the metadata of the block start
  * 
- * return : l'indice de du bloc dans la heap 
+ * return : the index of the block in the heap 
  */
 uint16_t get_index(BeginBlock*);
 
 
 /**
- * args : uint16_t un indice du tableau
+ * args : uint16_t an array index
  * 
- * return : les deux octets de métadonnées situés à droite de l'indice, transformés en une valeur décimale
+ * return : the two bytes of metadata located at the index, converted to a decimal value
  */
 uint16_t read_2bytes(uint16_t);
 
 
 /**
- * args : uint16_t un indice du tableau
- *         uint16_t la valeur qu'on veut écrire
+ * args : uint16_t an array index
+ *         uint16_t the value to write
  * 
- * effet : écrit 16 bits de données dans la heap à partir de l'index donné
+ * effect : writes 16 bits of data to the heap starting from the given index
  */ 
 void write_2bytes(uint16_t, uint16_t);
 
 
-/* return le premier bloc libre de la heap */
+/* return the first free block of the heap */
 BeginBlock* get_first_free();
 
 
 /** 
- * La fonction init initialise la mémoire en plaçant un bloc de métadonnées au début et à la fin du tableau 
- * le bloc commence apres 2 bytes réservés pour stocker first_free, l'indice du premier bloc libre.
- * On y inscrit 2, l'indice du début du reste de la mémoire et donc du premier bloc libre.
+ * The init function initializes memory by placing a metadata block at the beginning and end of the array 
+ * the block starts after 2 bytes reserved to store first_free, the index of the first free block.
+ * We write 2 there, the index of the start of the rest of the memory and thus of the first free block.
  * */
 void init();
 
 
 /**
- * La fonciton my_free reçoit un pointeur vers une zone du tableau. 
- * Elle vérifie à gauche et à droite du segment à libérer pour éventuellement fusionner des zones libres.
- * Elle insère le bloc libéré dans la liste chaînée des blocs libres, au bon endroit
- * Elle met à jour l'indice du premier bloc libre au debut de la heap si nécessaire 
+ * The my_free function receives a pointer to an array area. 
+ * It checks left and right of the segment to be freed to potentially merge free zones.
+ * It inserts the freed block into the linked list of free blocks, at the correct position
+ * It updates the index of the first free block at the beginning of the heap if necessary 
  */
 void my_free(void *);
 
 
 /**
- * La fonction my_malloc reçoit une taille 'size' en argument qui indique le nombre d'octets dont l'utilisateur a besoin.
- * Elle trouve un emplacement adéquat pour glisser le segment demandé, avec ses 6 blocs de métadonnées.
- * Elle modifie (si nécessaire) les métadonnées du bloc vide restant après l'allocation de mémoire.
- * Elle retourne à l'utilisateur un pointeur vers l'adresse du début de son segment de données utiles.
+ * The my_malloc function receives a size 'size' as argument indicating the number of bytes the user needs.
+ * It finds an adequate location to insert the requested segment, with its 6 metadata blocks.
+ * It modifies (if necessary) the metadata of the remaining empty block after memory allocation.
+ * It returns to the user a pointer to the address of the beginning of their useful data segment.
  * 
- * Si la taille du bloc demandé dépasse la taille de la mémoire ou si la mémoire est trop fragmentée pour placer le bloc, 
- * la fonction retourne NULL.  
+ * If the requested block size exceeds the memory size or if memory is too fragmented to place the block, 
+ * the function returns NULL.  
  */
 void *my_malloc(size_t);
 
